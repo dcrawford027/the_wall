@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Wall</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/posts.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="navbar">
+            <h3>Coding Dojo Wall</h3>
+            <p>Welcome {{ user.first_name }}</p>
+            <a href="/logout">log off</a>
+        </div>
+        <div class="post-form-container">
+            <h2>Post a Message</h2>
+            <form action="/wall/post_message" method="POST">
+                {% csrf_token %}
+                <textarea name="mess_content" cols="100" rows="10"></textarea>
+                <button class="btn-message" type="submit">Post a Message</button>
+            </form>
+        </div>
+        <div class="post-container">
+            {% for post in posts reversed %}
+                    <h3>{{ post.user_id.first_name }} {{ post.user_id.last_name }} - {{ post.created_at }}</h3>
+                    <p>{{ post.message }}</p>
+                    {% if post.user_id.id == user.id %}
+                        <form action="/wall/delete_message" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="post_id" value="{{ post.id }}">
+                            <button class="btn-delete" type="submit">Delete Post</button>
+                        </form>
+                    {% endif %}
+                    <div class="comment-container">
+                        {% for comment in comments %}
+                            {% if comment.message_id.id == post.id %}
+                                    <h4>{{ comment.user_id.first_name }} {{ comment.user_id.last_name }} - {{ comment.created_at }}</h4>
+                                    <p>{{ comment.comment }}</p>
+                            {% endif %}
+                        {% endfor %}
+                        <div class="comment-form-container">
+                            <p>Post a Comment</p>
+                            <form action="/wall/post_comment" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="post_id" value="{{ post.id }}">
+                                <textarea name="comment_content" cols="96" rows="7"></textarea>
+                                <button class="btn-comment" type="submit">Post a Comment</button>
+                            </form>
+                        </div>
+                    </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
