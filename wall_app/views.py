@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from login_app.models import User
 from .models import Message, Comment
+from datetime import *
+from dateutil.relativedelta import *
 
 # Create your views here.
 def wall(request):
@@ -26,6 +28,6 @@ def postComment(request):
     return redirect('/wall')
 
 def deleteMessage(request):
-    comment = Message.objects.get(id=request.POST['post_id'])
-    comment.delete()
+    message = Message.objects.get(id=request.POST['post_id'])
+    message.delete()
     return redirect('/wall')
